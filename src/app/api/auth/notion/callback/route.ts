@@ -81,6 +81,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Also set non-httpOnly display cookies so the client can show names
+    const displayCookieOpts = {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax" as const,
+      maxAge: 60 * 60 * 24 * 30,
+      path: "/",
+    };
+    response.cookies.set(
+      "workspace_name",
+      tokenData.workspace_name ?? "",
+      displayCookieOpts
+    );
+    if (tokenData.owner?.user) {
+      response.cookies.set(
+        "user_name",
+        tokenData.owner.user.name ?? "",
+        displayCookieOpts
+      );
+    }
+
     // Clear the state cookie
     response.cookies.delete("notion_oauth_state");
 

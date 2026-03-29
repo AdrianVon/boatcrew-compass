@@ -11,5 +11,7 @@ export async function POST() {
   response.cookies.delete("compass_db_id");
   response.cookies.delete("reflection_db_id");
   response.cookies.delete("compass_page_id");
+  response.cookies.delete("workspace_name");
+  response.cookies.delete("user_name");
   return response;
 }

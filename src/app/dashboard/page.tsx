@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { DIRECTION_META, getCurrentQuarter, type CompassData, type Direction } from "@/lib/notion-schemas";
+import {
+  DIRECTION_META,
+  getCurrentQuarter,
+  type CompassData,
+  type Direction,
+} from "@/lib/notion-schemas";
 
 interface SetupState {
   isSetUp: boolean;
@@ -23,8 +28,21 @@ export default function DashboardPage() {
   });
   const [compass, setCompass] = useState<CompassData | null>(null);
   const [reflections, setReflections] = useState<ReflectionSummary[]>([]);
+  const [workspaceName, setWorkspaceName] = useState("");
+  const [userName, setUserName] = useState("");
   const currentQ = getCurrentQuarter();
   const currentYear = new Date().getFullYear();
+
+  // Read names from cookies (client-side)
+  useEffect(() => {
+    const cookies = document.cookie.split("; ");
+    for (const c of cookies) {
+      const [key, ...rest] = c.split("=");
+      const val = decodeURIComponent(rest.join("="));
+      if (key === "workspace_name") setWorkspaceName(val);
+      if (key === "user_name") setUserName(val);
+    }
+  }, []);
 
   const runSetup = useCallback(async () => {
     try {
@@ -52,7 +70,6 @@ export default function DashboardPage() {
       const setupOk = await runSetup();
       if (!setupOk) return;
 
-      // Load compass data
       try {
         const compassRes = await fetch("/api/compass");
         if (compassRes.ok) {
@@ -63,14 +80,17 @@ export default function DashboardPage() {
         console.error("Failed to load compass:", err);
       }
 
-      // Load reflections
       try {
         const refRes = await fetch("/api/reflection");
         if (refRes.ok) {
           const data = await refRes.json();
           setReflections(
             data.reflections?.map(
-              (r: { quarterNumber: string; year: number; completed: boolean }) => ({
+              (r: {
+                quarterNumber: string;
+                year: number;
+                completed: boolean;
+              }) => ({
                 quarterNumber: r.quarterNumber,
                 year: r.year,
                 completed: r.completed,
@@ -95,12 +115,20 @@ export default function DashboardPage() {
       items.every((item: string) => !item.trim())
     );
 
+  const isFirstTime = compassIsEmpty && reflections.length === 0;
+
   if (setup.loading) {
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-3">
           <div className="w-8 h-8 border-2 border-gray-900 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-gray-400">Setting up your workspace...</p>
+          <p className="text-gray-500 font-medium">
+            Setting up your workspace...
+          </p>
+          <p className="text-xs text-gray-400">
+            Creating your Priorities Compass and Quarterly Reflections databases
+            in Notion
+          </p>
         </div>
       </main>
     );
@@ -110,17 +138,44 @@ export default function DashboardPage() {
     return (
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="max-w-md text-center space-y-4">
+          <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto">
+            <svg
+              className="w-7 h-7 text-red-400"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          </div>
           <h1 className="text-2xl font-black">Setup needed</h1>
-          <p className="text-gray-600">{setup.error}</p>
-          <button
-            onClick={() => {
-              setSetup({ isSetUp: false, loading: true, error: null });
-              runSetup();
-            }}
-            className="px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800"
-          >
-            Try again
-          </button>
+          <p className="text-gray-600 leading-relaxed">{setup.error}</p>
+          <div className="space-y-3 pt-2">
+            <button
+              onClick={() => {
+                setSetup({ isSetUp: false, loading: true, error: null });
+                runSetup();
+              }}
+              className="w-full px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800"
+            >
+              Try again
+            </button>
+            <p className="text-xs text-gray-400">
+              Make sure you selected a page to share when connecting Notion. The
+              app needs at least one page to create your databases.
+            </p>
+            <a
+              href="/api/auth/notion"
+              className="inline-block text-sm text-gray-400 hover:text-gray-600 underline"
+            >
+              Reconnect with Notion
+            </a>
+          </div>
         </div>
       </main>
     );
@@ -134,7 +189,16 @@ export default function DashboardPage() {
           <p className="text-sm font-medium tracking-widest text-gray-400 uppercase">
             2026: Designed
           </p>
-          <h1 className="text-3xl font-black">Your Compass</h1>
+          <h1 className="text-3xl font-black">
+            {userName
+              ? `Welcome${isFirstTime ? "" : " back"}, ${userName.split(" ")[0]}`
+              : "Your Compass"}
+          </h1>
+          {workspaceName && (
+            <p className="text-sm text-gray-400 mt-0.5">
+              Connected to {workspaceName}
+            </p>
+          )}
         </div>
         <form action="/api/auth/logout" method="POST">
           <button
@@ -146,18 +210,123 @@ export default function DashboardPage() {
         </form>
       </div>
 
+      {/* First-time welcome */}
+      {isFirstTime && (
+        <div className="bg-gradient-to-br from-pink-50 to-blue-50 rounded-2xl p-8 mb-10 border border-pink-100">
+          <div className="max-w-lg">
+            <h2 className="text-xl font-black mb-2">
+              You&apos;re all set up!
+            </h2>
+            <p className="text-gray-600 leading-relaxed mb-6">
+              Two databases have been created in your Notion workspace:
+              <strong> Priorities Compass</strong> and
+              <strong> Quarterly Reflections</strong>. Start by setting your
+              compass&mdash;it takes about 5 minutes.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a
+                href="/compass"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+              >
+                <span>Set Your Compass</span>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </a>
+              <p className="text-sm text-gray-400 self-center">
+                Takes about 5 minutes
+              </p>
+            </div>
+          </div>
+
+          {/* Mini guide */}
+          <div className="mt-8 pt-6 border-t border-pink-100/50">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+              Your journey
+            </p>
+            <div className="flex items-center gap-3 text-sm">
+              <span className="flex items-center gap-2 text-green-600 font-semibold">
+                <svg
+                  className="w-5 h-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Connect Notion
+              </span>
+              <svg
+                className="w-4 h-4 text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+              <span className="flex items-center gap-2 text-pink-500 font-semibold">
+                <span className="w-5 h-5 rounded-full bg-pink-100 text-pink-500 text-xs flex items-center justify-center font-bold">
+                  2
+                </span>
+                Set Compass
+              </span>
+              <svg
+                className="w-4 h-4 text-gray-300"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+              <span className="flex items-center gap-2 text-gray-400">
+                <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-400 text-xs flex items-center justify-center font-bold">
+                  3
+                </span>
+                Quarterly Reflection
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Action cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
         <a
           href="/compass"
           className="block p-6 rounded-2xl border-2 border-gray-200 hover:border-gray-900 transition-colors group"
         >
-          <h2 className="text-lg font-black group-hover:text-gray-900">
-            {compassIsEmpty ? "Set Your Compass" : "Edit Your Compass"}
-          </h2>
+          <div className="flex items-start justify-between">
+            <h2 className="text-lg font-black group-hover:text-gray-900">
+              {compassIsEmpty ? "Set Your Compass" : "Edit Your Compass"}
+            </h2>
+            <span className="text-2xl">&#x1F9ED;</span>
+          </div>
           <p className="text-sm text-gray-500 mt-1">
             {compassIsEmpty
-              ? "Define your North, South, East, and West priorities"
+              ? "Define your North, South, East, and West priorities for the year"
               : "Update your priorities as things evolve"}
           </p>
           <span className="inline-block mt-3 text-sm font-semibold text-gray-400 group-hover:text-gray-900">
@@ -169,11 +338,14 @@ export default function DashboardPage() {
           href="/reflection"
           className="block p-6 rounded-2xl border-2 border-gray-200 hover:border-gray-900 transition-colors group"
         >
-          <h2 className="text-lg font-black group-hover:text-gray-900">
-            {hasCurrentReflection
-              ? `${currentQ} Reflection`
-              : `Start ${currentQ} Reflection`}
-          </h2>
+          <div className="flex items-start justify-between">
+            <h2 className="text-lg font-black group-hover:text-gray-900">
+              {hasCurrentReflection
+                ? `${currentQ} Reflection`
+                : `Start ${currentQ} Reflection`}
+            </h2>
+            <span className="text-2xl">&#x1F4DD;</span>
+          </div>
           <p className="text-sm text-gray-500 mt-1">
             {hasCurrentReflection
               ? "Review or update your quarterly reflection"
@@ -188,7 +360,9 @@ export default function DashboardPage() {
       {/* Compass summary */}
       {!compassIsEmpty && compass && (
         <div>
-          <h2 className="text-xl font-black mb-4">Your Priorities at a Glance</h2>
+          <h2 className="text-xl font-black mb-4">
+            Your Priorities at a Glance
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(["North", "West", "East", "South"] as Direction[]).map((dir) => {
               const meta = DIRECTION_META[dir];
@@ -231,8 +405,8 @@ export default function DashboardPage() {
                     done
                       ? "bg-green-100 text-green-700"
                       : q === currentQ
-                      ? "bg-yellow-50 text-yellow-600 border border-yellow-200"
-                      : "bg-gray-100 text-gray-400"
+                        ? "bg-yellow-50 text-yellow-600 border border-yellow-200"
+                        : "bg-gray-100 text-gray-400"
                   }`}
                 >
                   {q} {done ? "\u2713" : q === currentQ ? "In progress" : ""}
@@ -240,6 +414,19 @@ export default function DashboardPage() {
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Notion tip for first-time users */}
+      {isFirstTime && (
+        <div className="mt-12 p-5 bg-gray-50 rounded-xl border border-gray-100">
+          <p className="text-sm text-gray-500 leading-relaxed">
+            <strong className="text-gray-700">Tip:</strong> Open Notion and
+            you&apos;ll see two new databases on the page you shared&mdash;
+            &ldquo;Priorities Compass&rdquo; and &ldquo;Quarterly
+            Reflections.&rdquo; Everything you enter here syncs there
+            automatically.
+          </p>
         </div>
       )}
     </main>
