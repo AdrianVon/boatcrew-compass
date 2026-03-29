@@ -31,7 +31,14 @@ export default async function LandingPage() {
           </p>
 
           {/* CTA */}
-          <div className="space-y-3">
+          <div className="space-y-4">
+            {/* Pre-click hint */}
+            <div className="inline-block bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 text-sm text-amber-800">
+              <strong>Heads up:</strong> Notion will ask you to select a
+              page&mdash;just pick one or create a blank page called
+              &ldquo;Boatcrew Compass.&rdquo;
+            </div>
+            <div>
             <a
               href="/api/auth/notion"
               className="inline-flex items-center gap-3 px-8 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors text-lg shadow-lg shadow-gray-900/10"
@@ -56,9 +63,10 @@ export default async function LandingPage() {
               </svg>
               Get Started with Notion
             </a>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 mt-3">
               Free &middot; Takes about 2 minutes &middot; No sign-up needed
             </p>
+            </div>
           </div>
         </div>
       </section>
@@ -78,9 +86,10 @@ export default async function LandingPage() {
               </div>
               <h3 className="font-bold">Connect your Notion</h3>
               <p className="text-sm text-gray-500 leading-relaxed">
-                Click &ldquo;Get Started&rdquo; and you&apos;ll see a Notion
-                pop-up asking you to grant access. Pick any page in your
-                workspace&mdash;that&apos;s where your data will live.
+                Click &ldquo;Get Started&rdquo; and Notion will open. Under
+                &ldquo;Select pages,&rdquo; check the box next to any
+                page&mdash;or create a new blank page called &ldquo;Boatcrew
+                Compass.&rdquo; Then click &ldquo;Allow access.&rdquo;
               </p>
             </div>
 
@@ -193,10 +202,13 @@ export default async function LandingPage() {
                 What happens when I click &ldquo;Get Started&rdquo;?
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed">
-                You&apos;ll be taken to Notion&apos;s authorization screen. It
-                will ask you to select a page to share with Boatcrew Compass.
-                Pick any page (or create a new one)&mdash;we&apos;ll create two
-                small databases inside it for your priorities and reflections.
+                Notion opens and asks you to grant Boatcrew Compass access.
+                You&apos;ll see a &ldquo;Select pages&rdquo; section&mdash;check
+                the box next to an existing page, or create a new blank page
+                (we recommend naming it &ldquo;Boatcrew Compass&rdquo;). The app
+                will create two small databases inside that page for your
+                priorities and reflections. Then click &ldquo;Allow access&rdquo;
+                and you&apos;re done.
               </p>
             </div>
             <div>

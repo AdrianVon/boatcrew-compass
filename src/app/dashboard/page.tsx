@@ -166,8 +166,10 @@ export default function DashboardPage() {
               Try again
             </button>
             <p className="text-xs text-gray-400">
-              Make sure you selected a page to share when connecting Notion. The
-              app needs at least one page to create your databases.
+              When Notion asks you to &ldquo;Select pages,&rdquo; you must check
+              the box next to at least one page (or create a new blank page
+              called &ldquo;Boatcrew Compass&rdquo;). The app creates your
+              databases inside that page.
             </p>
             <a
               href="/api/auth/notion"
