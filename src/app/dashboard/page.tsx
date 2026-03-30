@@ -119,7 +119,7 @@ export default function DashboardPage() {
 
   if (setup.loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
+      <main className="min-h-screen flex items-center justify-center px-5">
         <div className="text-center space-y-3">
           <div className="w-8 h-8 border-2 border-gray-900 border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-gray-500 font-medium">
@@ -136,8 +136,8 @@ export default function DashboardPage() {
 
   if (setup.error) {
     return (
-      <main className="min-h-screen flex items-center justify-center px-6">
-        <div className="max-w-md text-center space-y-4">
+      <main className="min-h-screen flex items-center justify-center px-5 sm:px-6">
+        <div className="max-w-md w-full text-center space-y-4">
           <div className="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mx-auto">
             <svg
               className="w-7 h-7 text-red-400"
@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 setSetup({ isSetUp: false, loading: true, error: null });
                 runSetup();
               }}
-              className="w-full px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800"
+              className="w-full px-6 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 active:bg-gray-950"
             >
               Try again
             </button>
@@ -184,28 +184,28 @@ export default function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-12 max-w-4xl mx-auto">
+    <main className="min-h-screen px-5 sm:px-6 py-8 sm:py-12 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-10">
-        <div>
-          <p className="text-sm font-medium tracking-widest text-gray-400 uppercase">
+      <div className="flex items-start sm:items-center justify-between mb-8 sm:mb-10 gap-4">
+        <div className="min-w-0">
+          <p className="text-xs sm:text-sm font-medium tracking-widest text-gray-400 uppercase">
             2026: Designed
           </p>
-          <h1 className="text-3xl font-black">
+          <h1 className="text-2xl sm:text-3xl font-black truncate">
             {userName
               ? `Welcome${isFirstTime ? "" : " back"}, ${userName.split(" ")[0]}`
               : "Your Compass"}
           </h1>
           {workspaceName && (
-            <p className="text-sm text-gray-400 mt-0.5">
+            <p className="text-xs sm:text-sm text-gray-400 mt-0.5 truncate">
               Connected to {workspaceName}
             </p>
           )}
         </div>
-        <form action="/api/auth/logout" method="POST">
+        <form action="/api/auth/logout" method="POST" className="shrink-0">
           <button
             type="submit"
-            className="text-sm text-gray-400 hover:text-gray-600"
+            className="text-sm text-gray-400 hover:text-gray-600 py-1"
           >
             Log out
           </button>
@@ -214,12 +214,12 @@ export default function DashboardPage() {
 
       {/* First-time welcome */}
       {isFirstTime && (
-        <div className="bg-gradient-to-br from-pink-50 to-blue-50 rounded-2xl p-8 mb-10 border border-pink-100">
+        <div className="bg-gradient-to-br from-pink-50 to-blue-50 rounded-2xl p-5 sm:p-8 mb-8 sm:mb-10 border border-pink-100">
           <div className="max-w-lg">
-            <h2 className="text-xl font-black mb-2">
+            <h2 className="text-lg sm:text-xl font-black mb-2">
               You&apos;re all set up!
             </h2>
-            <p className="text-gray-600 leading-relaxed mb-6">
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed mb-5 sm:mb-6">
               Two databases have been created in your Notion workspace:
               <strong> Priorities Compass</strong> and
               <strong> Quarterly Reflections</strong>. Start by setting your
@@ -228,7 +228,7 @@ export default function DashboardPage() {
             <div className="flex flex-col sm:flex-row gap-3">
               <a
                 href="/compass"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 active:bg-gray-950 transition-colors"
               >
                 <span>Set Your Compass</span>
                 <svg
@@ -245,21 +245,21 @@ export default function DashboardPage() {
                   />
                 </svg>
               </a>
-              <p className="text-sm text-gray-400 self-center">
+              <p className="text-sm text-gray-400 self-center text-center sm:text-left">
                 Takes about 5 minutes
               </p>
             </div>
           </div>
 
           {/* Mini guide */}
-          <div className="mt-8 pt-6 border-t border-pink-100/50">
-            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">
+          <div className="mt-6 sm:mt-8 pt-5 sm:pt-6 border-t border-pink-100/50">
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 sm:mb-4">
               Your journey
             </p>
-            <div className="flex items-center gap-3 text-sm">
-              <span className="flex items-center gap-2 text-green-600 font-semibold">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm">
+              <span className="flex items-center gap-1.5 sm:gap-2 text-green-600 font-semibold">
                 <svg
-                  className="w-5 h-5"
+                  className="w-5 h-5 shrink-0"
                   fill="currentColor"
                   viewBox="0 0 20 20"
                 >
@@ -272,7 +272,7 @@ export default function DashboardPage() {
                 Connect Notion
               </span>
               <svg
-                className="w-4 h-4 text-gray-300"
+                className="w-3 h-3 sm:w-4 sm:h-4 text-gray-300 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -284,14 +284,14 @@ export default function DashboardPage() {
                   d="M9 5l7 7-7 7"
                 />
               </svg>
-              <span className="flex items-center gap-2 text-pink-500 font-semibold">
-                <span className="w-5 h-5 rounded-full bg-pink-100 text-pink-500 text-xs flex items-center justify-center font-bold">
+              <span className="flex items-center gap-1.5 sm:gap-2 text-pink-500 font-semibold">
+                <span className="w-5 h-5 rounded-full bg-pink-100 text-pink-500 text-xs flex items-center justify-center font-bold shrink-0">
                   2
                 </span>
                 Set Compass
               </span>
               <svg
-                className="w-4 h-4 text-gray-300"
+                className="w-3 h-3 sm:w-4 sm:h-4 text-gray-300 shrink-0"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -303,11 +303,11 @@ export default function DashboardPage() {
                   d="M9 5l7 7-7 7"
                 />
               </svg>
-              <span className="flex items-center gap-2 text-gray-400">
-                <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-400 text-xs flex items-center justify-center font-bold">
+              <span className="flex items-center gap-1.5 sm:gap-2 text-gray-400">
+                <span className="w-5 h-5 rounded-full bg-gray-100 text-gray-400 text-xs flex items-center justify-center font-bold shrink-0">
                   3
                 </span>
-                Quarterly Reflection
+                Reflect
               </span>
             </div>
           </div>
@@ -315,16 +315,16 @@ export default function DashboardPage() {
       )}
 
       {/* Action cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-8 sm:mb-10">
         <a
           href="/compass"
-          className="block p-6 rounded-2xl border-2 border-gray-200 hover:border-gray-900 transition-colors group"
+          className="block p-5 sm:p-6 rounded-2xl border-2 border-gray-200 hover:border-gray-900 active:border-gray-900 transition-colors group"
         >
           <div className="flex items-start justify-between">
-            <h2 className="text-lg font-black group-hover:text-gray-900">
+            <h2 className="text-base sm:text-lg font-black group-hover:text-gray-900">
               {compassIsEmpty ? "Set Your Compass" : "Edit Your Compass"}
             </h2>
-            <span className="text-2xl">&#x1F9ED;</span>
+            <span className="text-xl sm:text-2xl">&#x1F9ED;</span>
           </div>
           <p className="text-sm text-gray-500 mt-1">
             {compassIsEmpty
@@ -338,15 +338,15 @@ export default function DashboardPage() {
 
         <a
           href="/reflection"
-          className="block p-6 rounded-2xl border-2 border-gray-200 hover:border-gray-900 transition-colors group"
+          className="block p-5 sm:p-6 rounded-2xl border-2 border-gray-200 hover:border-gray-900 active:border-gray-900 transition-colors group"
         >
           <div className="flex items-start justify-between">
-            <h2 className="text-lg font-black group-hover:text-gray-900">
+            <h2 className="text-base sm:text-lg font-black group-hover:text-gray-900">
               {hasCurrentReflection
                 ? `${currentQ} Reflection`
                 : `Start ${currentQ} Reflection`}
             </h2>
-            <span className="text-2xl">&#x1F4DD;</span>
+            <span className="text-xl sm:text-2xl">&#x1F4DD;</span>
           </div>
           <p className="text-sm text-gray-500 mt-1">
             {hasCurrentReflection
@@ -362,10 +362,10 @@ export default function DashboardPage() {
       {/* Compass summary */}
       {!compassIsEmpty && compass && (
         <div>
-          <h2 className="text-xl font-black mb-4">
+          <h2 className="text-lg sm:text-xl font-black mb-3 sm:mb-4">
             Your Priorities at a Glance
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {(["North", "West", "East", "South"] as Direction[]).map((dir) => {
               const meta = DIRECTION_META[dir];
               const key = dir.toLowerCase() as keyof CompassData;
@@ -373,11 +373,11 @@ export default function DashboardPage() {
               if (items.length === 0) return null;
 
               return (
-                <div key={dir} className={`${meta.color} rounded-xl p-4`}>
-                  <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                <div key={dir} className={`${meta.color} rounded-xl p-3 sm:p-4`}>
+                  <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-1.5 sm:mb-2">
                     {meta.label} &mdash; {meta.title}
                   </h3>
-                  <ul className="space-y-1">
+                  <ul className="space-y-0.5 sm:space-y-1">
                     {items.map((item: string, i: number) => (
                       <li key={i} className="text-sm text-gray-700">
                         {i + 1}. {item}
@@ -393,9 +393,11 @@ export default function DashboardPage() {
 
       {/* Reflection status */}
       {reflections.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-black mb-4">Reflections</h2>
-          <div className="flex gap-3">
+        <div className="mt-6 sm:mt-8">
+          <h2 className="text-lg sm:text-xl font-black mb-3 sm:mb-4">
+            Reflections
+          </h2>
+          <div className="flex gap-2 sm:gap-3">
             {(["Q1", "Q2", "Q3", "Q4"] as const).map((q) => {
               const done = reflections.some(
                 (r) => r.quarterNumber === q && r.year === currentYear
@@ -403,7 +405,7 @@ export default function DashboardPage() {
               return (
                 <div
                   key={q}
-                  className={`px-4 py-2 rounded-lg text-sm font-semibold ${
+                  className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold ${
                     done
                       ? "bg-green-100 text-green-700"
                       : q === currentQ
@@ -411,7 +413,7 @@ export default function DashboardPage() {
                         : "bg-gray-100 text-gray-400"
                   }`}
                 >
-                  {q} {done ? "\u2713" : q === currentQ ? "In progress" : ""}
+                  {q} {done ? "\u2713" : q === currentQ ? "Now" : ""}
                 </div>
               );
             })}
@@ -421,7 +423,7 @@ export default function DashboardPage() {
 
       {/* Notion tip for first-time users */}
       {isFirstTime && (
-        <div className="mt-12 p-5 bg-gray-50 rounded-xl border border-gray-100">
+        <div className="mt-8 sm:mt-12 p-4 sm:p-5 bg-gray-50 rounded-xl border border-gray-100">
           <p className="text-sm text-gray-500 leading-relaxed">
             <strong className="text-gray-700">Tip:</strong> Open Notion and
             you&apos;ll see two new databases on the page you shared&mdash;

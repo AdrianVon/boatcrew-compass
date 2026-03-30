@@ -166,22 +166,24 @@ export default function ReflectionPage() {
   }
 
   return (
-    <main className="min-h-screen px-6 py-12 max-w-2xl mx-auto">
-      <div className="mb-8">
+    <main className="min-h-screen px-4 sm:px-6 py-8 sm:py-12 max-w-2xl mx-auto">
+      <div className="mb-6 sm:mb-8">
         <a
           href="/dashboard"
           className="text-sm text-gray-400 hover:text-gray-600"
         >
           &larr; Dashboard
         </a>
-        <h1 className="text-3xl font-black mt-1">Quarterly Reflection</h1>
-        <p className="text-gray-500 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-black mt-1">
+          Quarterly Reflection
+        </h1>
+        <p className="text-sm sm:text-base text-gray-500 mt-1">
           Revisit your Theme, Compass, and Three Wins before you begin.
         </p>
       </div>
 
-      {/* Quarter selector */}
-      <div className="flex gap-2 mb-8">
+      {/* Quarter selector — scrollable on mobile */}
+      <div className="flex gap-2 mb-6 sm:mb-8 overflow-x-auto pb-1 -mx-1 px-1">
         {(["Q1", "Q2", "Q3", "Q4"] as const).map((q) => {
           const hasData = existingReflections.some(
             (r) => r.quarterNumber === q && r.year === year
@@ -190,10 +192,10 @@ export default function ReflectionPage() {
             <button
               key={q}
               onClick={() => handleQuarterChange(q)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors relative ${
+              className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors relative shrink-0 min-w-[4.5rem] ${
                 quarter === q
                   ? "bg-gray-900 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200 active:bg-gray-300"
               }`}
             >
               {getQuarterLabel(q)}
@@ -206,35 +208,37 @@ export default function ReflectionPage() {
       </div>
 
       {/* Reflection prompts */}
-      <div className="space-y-6">
+      <div className="space-y-5 sm:space-y-6">
         {PROMPTS.map(({ key, label }) => (
           <div key={key}>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
+            <label className="block text-sm font-bold text-gray-700 mb-1.5 sm:mb-2">
               {label}
             </label>
             <textarea
               value={reflection[key as keyof ReflectionData] as string}
               onChange={(e) => handleChange(key, e.target.value)}
               rows={3}
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm resize-y"
+              className="w-full px-3 sm:px-4 py-3 rounded-lg border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent text-sm resize-y"
               placeholder="Take your time..."
             />
           </div>
         ))}
       </div>
 
-      {/* Save button */}
-      <div className="mt-8 flex items-center gap-4">
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="px-8 py-3 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {saving ? "Saving..." : "Save to Notion"}
-        </button>
+      {/* Sticky save button on mobile */}
+      <div className="mt-6 sm:mt-8 sm:flex sm:items-center sm:gap-4">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gray-50/95 backdrop-blur border-t border-gray-200 sm:static sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0 z-10">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="w-full sm:w-auto px-8 py-3.5 sm:py-3 bg-gray-900 text-white font-semibold rounded-xl sm:rounded-lg hover:bg-gray-800 active:bg-gray-950 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base sm:text-sm"
+          >
+            {saving ? "Saving..." : "Save to Notion"}
+          </button>
+        </div>
         {message && (
           <p
-            className={`text-sm font-medium ${
+            className={`text-sm font-medium mt-3 sm:mt-0 text-center sm:text-left ${
               message.includes("Failed") ? "text-red-500" : "text-green-600"
             }`}
           >
@@ -242,6 +246,9 @@ export default function ReflectionPage() {
           </p>
         )}
       </div>
+
+      {/* Spacer so content isn't hidden behind sticky button on mobile */}
+      <div className="h-20 sm:h-0" />
     </main>
   );
 }
