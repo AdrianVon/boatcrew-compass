@@ -109,3 +109,131 @@ export function getQuarterLabel(q: string): string {
   };
   return labels[q] ?? q;
 }
+
+// ─── Exercise Database Schemas ───────────────────────────────────────
+// Each exercise from the workbook gets its own Notion database
+// with semantically named properties for agent-friendly access.
+
+export const REGRET_REVIEW_PROPERTIES = {
+  Entry: { title: {} },
+  "Biggest Regret": { rich_text: {} },
+  "Lesson Learned": { rich_text: {} },
+  "First Step": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const PRE_MORTEM_PROPERTIES = {
+  Entry: { title: {} },
+  "Most Important Project": { rich_text: {} },
+  "What Went Wrong 1": { rich_text: {} },
+  "What Went Wrong 2": { rich_text: {} },
+  "What Went Wrong 3": { rich_text: {} },
+  "Prevention 1": { rich_text: {} },
+  "Prevention 2": { rich_text: {} },
+  "Prevention 3": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const IDENTITY_SNAPSHOT_PROPERTIES = {
+  Entry: { title: {} },
+  "Word 1": { rich_text: {} },
+  "Word 2": { rich_text: {} },
+  "Word 3": { rich_text: {} },
+  "Emotions at Best": { rich_text: {} },
+  "Emotions Not at Best": { rich_text: {} },
+  "Conditions for Best": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const STRENGTHS_MAPPING_PROPERTIES = {
+  Entry: { title: {} },
+  "Strength I See 1": { rich_text: {} },
+  "Strength I See 2": { rich_text: {} },
+  "Strength I See 3": { rich_text: {} },
+  "Strength Others See 1": { rich_text: {} },
+  "Strength Others See 2": { rich_text: {} },
+  "Strength Others See 3": { rich_text: {} },
+  "What Im Good At": { rich_text: {} },
+  "What I Enjoy": { rich_text: {} },
+  "What the World Needs": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const TO_DONT_LIST_PROPERTIES = {
+  Entry: { title: {} },
+  "Time Waster 1": { rich_text: {} },
+  "Time Waster 2": { rich_text: {} },
+  "Time Waster 3": { rich_text: {} },
+  "Dont 1": { rich_text: {} },
+  "Dont 2": { rich_text: {} },
+  "Dont 3": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const ENDURANCE_TEST_PROPERTIES = {
+  Entry: { title: {} },
+  "Discomfort Willing to Endure": { rich_text: {} },
+  "Rewarded Skill 1": { rich_text: {} },
+  "Rewarded Skill 2": { rich_text: {} },
+  "Rewarded Skill 3": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const CONTRIBUTION_BLUEPRINT_PROPERTIES = {
+  Entry: { title: {} },
+  Why: { rich_text: {} },
+  Who: { rich_text: {} },
+  What: { rich_text: {} },
+  Impact: { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const ANTI_PLAN_PROPERTIES = {
+  Entry: { title: {} },
+  "Cant Control 1": { rich_text: {} },
+  "Cant Control 2": { rich_text: {} },
+  "Cant Control 3": { rich_text: {} },
+  "Can Control 1": { rich_text: {} },
+  "Can Control 2": { rich_text: {} },
+  "Can Control 3": { rich_text: {} },
+  "Anchor Principles": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const MOTIVATION_SWITCHES_PROPERTIES = {
+  Entry: { title: {} },
+  Autonomy: { rich_text: {} },
+  Mastery: { rich_text: {} },
+  "Purpose Work": { rich_text: {} },
+  "Purpose Because": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const THREE_WINS_PROPERTIES = {
+  Entry: { title: {} },
+  "Win 1": { rich_text: {} },
+  "Win 2": { rich_text: {} },
+  "Win 3": { rich_text: {} },
+  "Why They Matter": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const CHALLENGE_NETWORK_PROPERTIES = {
+  Entry: { title: {} },
+  "Challenger Name": { rich_text: {} },
+  "Challenger Why": { rich_text: {} },
+  "Cheerleader Name": { rich_text: {} },
+  "Cheerleader Why": { rich_text: {} },
+  "Coach Name": { rich_text: {} },
+  "Coach Why": { rich_text: {} },
+  Format: { rich_text: {} },
+  Cadence: { rich_text: {} },
+  "Invite By Date": { rich_text: {} },
+  Updated: { date: {} },
+};
+
+export const THEME_PROPERTIES = {
+  Entry: { title: {} },
+  "My Theme": { rich_text: {} },
+  Updated: { date: {} },
+};

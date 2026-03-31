@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const protectedRoutes = ["/dashboard", "/compass", "/reflection"];
+const protectedRoutes = ["/dashboard", "/compass", "/reflection", "/exercise"];
 
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("notion_token")?.value;
