@@ -16,28 +16,23 @@ export default async function LandingPage() {
         <div className="max-w-2xl w-full text-center space-y-6 sm:space-y-8">
           <div className="space-y-1.5 sm:space-y-2">
             <p className="text-xs sm:text-sm font-medium tracking-widest text-gray-400 uppercase">
-              2026: Designed
+              Design your year with intention
             </p>
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight">
-              Boatcrew
+              AI Priorities
               <br />
               <span className="text-pink-400">Compass</span>
             </h1>
           </div>
 
           <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-md mx-auto px-2">
-            A one-page map for how you&apos;ll move through the year. Set your
-            priorities, reflect each quarter, and stay on course&mdash;together.
+            Home to your personalized AI Coach. Set your priorities, work
+            through guided exercises, reflect each quarter, and stay
+            aligned with what matters most.
           </p>
 
           {/* CTA */}
           <div className="space-y-4">
-            {/* Pre-click hint */}
-            <div className="inline-block bg-amber-50 border border-amber-200 rounded-lg px-3 sm:px-4 py-2.5 text-sm text-amber-800 text-left sm:text-center">
-              <strong>Heads up:</strong> Notion will ask you to select a
-              page&mdash;just pick one or create a blank page called
-              &ldquo;Boatcrew Compass.&rdquo;
-            </div>
             <div>
               <a
                 href="/api/auth/notion"
@@ -62,10 +57,10 @@ export default async function LandingPage() {
                     fill="#000"
                   />
                 </svg>
-                Get Started with Notion
+                Connect to Notion
               </a>
               <p className="text-xs sm:text-sm text-gray-500 mt-3">
-                Free &middot; Takes about 2 minutes &middot; No sign-up needed
+                Free &middot; Takes 30 seconds &middot; Just click &ldquo;Allow access&rdquo;
               </p>
             </div>
           </div>
@@ -88,10 +83,9 @@ export default async function LandingPage() {
               <div>
                 <h3 className="font-bold mb-1">Connect your Notion</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">
-                  Click &ldquo;Get Started&rdquo; and Notion will open. Under
-                  &ldquo;Select pages,&rdquo; check the box next to any
-                  page&mdash;or create a new blank page called &ldquo;Boatcrew
-                  Compass.&rdquo; Then click &ldquo;Allow access.&rdquo;
+                  Click &ldquo;Connect to Notion&rdquo; and hit &ldquo;Allow
+                  access.&rdquo; A private workspace is created for you
+                  automatically.
                 </p>
               </div>
             </div>
@@ -102,11 +96,10 @@ export default async function LandingPage() {
                 2
               </div>
               <div>
-                <h3 className="font-bold mb-1">Set your compass</h3>
+                <h3 className="font-bold mb-1">Work through the exercises</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">
-                  Fill in your North (career), South (relationships), East
-                  (personal growth), and West (body &amp; health) priorities for
-                  the year.
+                  14 guided exercises help you define your priorities,
+                  strengths, theme, and support system for the year.
                 </p>
               </div>
             </div>
@@ -119,8 +112,8 @@ export default async function LandingPage() {
               <div>
                 <h3 className="font-bold mb-1">Reflect each quarter</h3>
                 <p className="text-sm text-gray-500 leading-relaxed">
-                  Every 90 days, come back and journal what worked, what
-                  didn&apos;t, and what to adjust. Your crew does the same.
+                  Every 90 days, check in on what worked, what didn&apos;t,
+                  and what to adjust. Your AI coach helps you stay aligned.
                 </p>
               </div>
             </div>
@@ -135,22 +128,22 @@ export default async function LandingPage() {
             <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100">
               <div className="text-2xl mb-2 sm:mb-3">&#x1F9ED;</div>
               <h3 className="font-bold text-base sm:text-lg mb-1.5 sm:mb-2">
-                Priorities Compass
+                14 Guided Exercises
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed">
-                Map your year across four directions: career projects, key
-                relationships, personal growth, and physical wellbeing. Three
-                items per direction keeps it focused.
+                From your Regret Review to your Priorities Compass to your
+                annual Theme &mdash; each exercise builds on the last to
+                create a complete blueprint for the year.
               </p>
             </div>
             <div className="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100">
               <div className="text-2xl mb-2 sm:mb-3">&#x1F4DD;</div>
               <h3 className="font-bold text-base sm:text-lg mb-1.5 sm:mb-2">
-                Quarterly Reflection
+                Quarterly Reflections
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed">
-                Six prompts guide your thinking at the end of each quarter: what
-                worked, what to subtract, surprises, theme alignment,
+                Six prompts guide your thinking at the end of each quarter:
+                what worked, what to subtract, surprises, theme alignment,
                 adjustments, and a 7-day action step.
               </p>
             </div>
@@ -165,10 +158,10 @@ export default async function LandingPage() {
             Your data, your workspace
           </h2>
           <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-            Boatcrew Compass doesn&apos;t have a database. When you connect,
-            two small tables are created inside <strong>your own</strong> Notion
-            workspace. You can view, edit, or delete them anytime from Notion
-            directly. We never see each other&apos;s data.
+            AI Priorities Compass doesn&apos;t have a database. When you
+            connect, your workbook is created inside <strong>your
+            own</strong> Notion workspace. You can view, edit, or delete it
+            anytime from Notion directly. We never see your data.
           </p>
           <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 sm:gap-6 text-sm text-gray-400">
             <span className="flex items-center gap-1.5">
@@ -193,7 +186,7 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* FAQ / common questions */}
+      {/* FAQ */}
       <section className="px-5 sm:px-6 py-10 sm:py-16">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-xl sm:text-2xl font-black text-center mb-8 sm:mb-10">
@@ -212,16 +205,14 @@ export default async function LandingPage() {
             </div>
             <div>
               <h3 className="font-bold text-gray-900 mb-1">
-                What happens when I click &ldquo;Get Started&rdquo;?
+                What happens when I click &ldquo;Connect to Notion&rdquo;?
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed">
-                Notion opens and asks you to grant Boatcrew Compass access.
-                You&apos;ll see a &ldquo;Select pages&rdquo; section&mdash;check
-                the box next to an existing page, or create a new blank page
-                (we recommend naming it &ldquo;Boatcrew Compass&rdquo;). The app
-                will create two small databases inside that page for your
-                priorities and reflections. Then click &ldquo;Allow access&rdquo;
-                and you&apos;re done.
+                Notion opens and asks you to grant access. Just click
+                &ldquo;Allow access&rdquo; and you&apos;re done. A private
+                workspace called &ldquo;AI Priorities Compass&rdquo; is
+                created in your Notion automatically with all your workbook
+                databases inside it.
               </p>
             </div>
             <div>
@@ -229,9 +220,9 @@ export default async function LandingPage() {
                 Can I see my data in Notion?
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed">
-                Absolutely. Open Notion and you&apos;ll see &ldquo;Priorities
-                Compass&rdquo; and &ldquo;Quarterly Reflections&rdquo; tables
-                right on the page you shared. They&apos;re fully yours.
+                Absolutely. Open Notion and you&apos;ll see your workbook
+                databases right inside the AI Priorities Compass page.
+                They&apos;re fully yours.
               </p>
             </div>
             <div>
@@ -240,8 +231,9 @@ export default async function LandingPage() {
               </h3>
               <p className="text-sm text-gray-500 leading-relaxed">
                 Click &ldquo;Log out&rdquo; on your dashboard, or go to
-                Notion&apos;s Settings &rarr; Connections and remove Boatcrew
-                Compass. Your data stays in your workspace either way.
+                Notion&apos;s Settings &rarr; Connections and remove AI
+                Priorities Compass. Your data stays in your workspace
+                either way.
               </p>
             </div>
           </div>
@@ -252,16 +244,16 @@ export default async function LandingPage() {
       <section className="bg-gray-900 px-5 sm:px-6 py-10 sm:py-12">
         <div className="max-w-lg mx-auto text-center space-y-4">
           <h2 className="text-xl sm:text-2xl font-black text-white">
-            Ready to start?
+            Ready to design your year?
           </h2>
           <p className="text-gray-400 text-sm">
-            Connect your Notion, set your compass, and you&apos;re on your way.
+            Connect your Notion and start your first exercise in under a minute.
           </p>
           <a
             href="/api/auth/notion"
             className="inline-block w-full sm:w-auto px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 active:bg-gray-200 transition-colors"
           >
-            Get Started with Notion
+            Connect to Notion
           </a>
         </div>
       </section>

@@ -10,7 +10,7 @@ function ErrorContent() {
   const errorInfo: Record<string, { message: string; help: string }> = {
     no_code: {
       message: "No authorization code received from Notion.",
-      help: "This usually means the Notion window was closed before completing. Try again and make sure to click 'Select pages' in the Notion pop-up.",
+      help: "This usually means the Notion window was closed before completing. Try again and make sure to click 'Allow access' on the Notion screen.",
     },
     invalid_state: {
       message: "Security validation failed.",
@@ -26,7 +26,7 @@ function ErrorContent() {
     },
     access_denied: {
       message: "You declined the Notion authorization.",
-      help: "No worries! You need to grant access for the app to work. When you're ready, click below and select at least one page to share on the Notion screen.",
+      help: "No worries! You need to grant access for the app to work. When you're ready, click below and hit 'Allow access' on the Notion screen.",
     },
     unknown: {
       message: "An unexpected error occurred.",

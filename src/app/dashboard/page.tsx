@@ -185,10 +185,9 @@ export default function DashboardPage() {
               Try again
             </button>
             <p className="text-xs text-gray-400">
-              When Notion asks you to &ldquo;Select pages,&rdquo; check the box
-              next to at least one page (or create a new blank page called
-              &ldquo;Boatcrew Compass&rdquo;). The app creates your databases
-              inside that page.
+              Click &ldquo;Reconnect&rdquo; below and hit &ldquo;Allow
+              access&rdquo; on the Notion screen. Your workspace will be
+              set up automatically.
             </p>
             <a
               href="/api/auth/notion"

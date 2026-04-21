@@ -9,13 +9,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Boatcrew Compass",
+  title: "AI Priorities Compass",
   description:
-    "A one-page map for how you'll move through the year. Based on Daniel Pink's 2026: Designed.",
+    "Home to your personalized AI Coach. Set your priorities, work through guided exercises, and stay aligned with what matters most.",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Boatcrew Compass",
+    title: "AI Priorities Compass",
   },
 };
 
