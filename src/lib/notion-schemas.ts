@@ -237,3 +237,11 @@ export const THEME_PROPERTIES = {
   "My Theme": { rich_text: {} },
   Updated: { date: {} },
 };
+
+// Settings database — stores connection tokens and user preferences
+// Tokens are stored in the user's own Notion workspace for privacy
+export const SETTINGS_PROPERTIES = {
+  Key: { title: {} },
+  Value: { rich_text: {} },
+  Updated: { date: {} },
+};

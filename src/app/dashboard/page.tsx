@@ -31,6 +31,8 @@ export default function DashboardPage() {
   const [exerciseStatus, setExerciseStatus] = useState<Record<string, boolean>>({});
   const [workspaceName, setWorkspaceName] = useState("");
   const [userName, setUserName] = useState("");
+  const [calConnected, setCalConnected] = useState(false);
+  const [calLoading, setCalLoading] = useState(true);
   const currentQ = getCurrentQuarter();
   const currentYear = new Date().getFullYear();
 
@@ -41,6 +43,7 @@ export default function DashboardPage() {
       const val = decodeURIComponent(rest.join("="));
       if (key === "workspace_name") setWorkspaceName(val);
       if (key === "user_name") setUserName(val);
+      if (key === "cal_connected" && val === "true") setCalConnected(true);
     }
   }, []);
 
@@ -71,10 +74,11 @@ export default function DashboardPage() {
       if (!setupOk) return;
 
       // Load all data in parallel
-      const [compassRes, refRes, statusRes] = await Promise.allSettled([
+      const [compassRes, refRes, statusRes, calRes] = await Promise.allSettled([
         fetch("/api/compass"),
         fetch("/api/reflection"),
         fetch("/api/exercise/status"),
+        fetch("/api/calendar"),
       ]);
 
       if (compassRes.status === "fulfilled" && compassRes.value.ok) {
@@ -91,6 +95,12 @@ export default function DashboardPage() {
         const data = await statusRes.value.json();
         setExerciseStatus(data.status ?? {});
       }
+
+      if (calRes.status === "fulfilled" && calRes.value.ok) {
+        const data = await calRes.value.json();
+        setCalConnected(data.connected ?? false);
+      }
+      setCalLoading(false);
     }
     init();
   }, [runSetup]);
@@ -489,6 +499,64 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Calendar connection */}
+      <div className="mt-8 sm:mt-10">
+        <div className="mb-3 sm:mb-4">
+          <h2 className="text-lg sm:text-xl font-black">
+            Your Calendar
+          </h2>
+          <p className="text-sm text-gray-400">
+            Connect your calendar so your AI coach can see if you&apos;re walking the talk
+          </p>
+        </div>
+
+        {calConnected ? (
+          <a
+            href="/calendar"
+            className="block p-4 sm:p-5 rounded-xl border-2 border-green-200 bg-green-50 hover:border-green-400 transition-colors group"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <svg className="w-5 h-5 text-green-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <div>
+                  <h3 className="text-sm font-bold text-green-800">Calendar connected</h3>
+                  <p className="text-xs text-green-600">View your calendar and alignment insights</p>
+                </div>
+              </div>
+              <svg className="w-5 h-5 text-green-300 group-hover:text-green-500 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        ) : (
+          <a
+            href="/api/auth/cal"
+            className="block p-4 sm:p-5 rounded-xl border-2 border-dashed border-gray-300 hover:border-gray-900 transition-colors group text-center sm:text-left"
+          >
+            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold group-hover:text-gray-900">
+                  Connect your calendar
+                </h3>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Link Google Calendar, Outlook, or Apple Calendar via Cal.com to unlock AI alignment insights
+                </p>
+              </div>
+              <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-900 shrink-0 hidden sm:block" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </a>
+        )}
       </div>
 
       {/* Notion tip */}

@@ -3,6 +3,7 @@ import { getNotionClient } from "@/lib/notion";
 import {
   COMPASS_PROPERTIES,
   REFLECTION_PROPERTIES,
+  SETTINGS_PROPERTIES,
 } from "@/lib/notion-schemas";
 import { EXERCISES, EXERCISE_ORDER } from "@/lib/exercises";
 
@@ -30,6 +31,13 @@ function getAllDbSpecs(): DbSpec[] {
       description:
         "Revisit your Theme, Compass, and Three Wins each quarter. Recalibrate with clarity and intention.",
       properties: REFLECTION_PROPERTIES,
+    },
+    {
+      cookieKey: "settings_db_id",
+      notionTitle: "Settings",
+      description:
+        "App settings and connection tokens. Managed automatically by AI Priorities Compass.",
+      properties: SETTINGS_PROPERTIES,
     },
   ];
 
