@@ -31,8 +31,8 @@ export default function DashboardPage() {
   const [exerciseStatus, setExerciseStatus] = useState<Record<string, boolean>>({});
   const [workspaceName, setWorkspaceName] = useState("");
   const [userName, setUserName] = useState("");
-  const [calConnected, setCalConnected] = useState(false);
-  const [calLoading, setCalLoading] = useState(true);
+  const [gcalConnected, setCalConnected] = useState(false);
+  const [gcalLoading, setCalLoading] = useState(true);
   const currentQ = getCurrentQuarter();
   const currentYear = new Date().getFullYear();
 
@@ -43,7 +43,7 @@ export default function DashboardPage() {
       const val = decodeURIComponent(rest.join("="));
       if (key === "workspace_name") setWorkspaceName(val);
       if (key === "user_name") setUserName(val);
-      if (key === "cal_connected" && val === "true") setCalConnected(true);
+      if (key === "gcal_connected" && val === "true") setCalConnected(true);
     }
   }, []);
 
@@ -512,7 +512,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {calConnected ? (
+        {gcalConnected ? (
           <a
             href="/calendar"
             className="block p-4 sm:p-5 rounded-xl border-2 border-green-200 bg-green-50 hover:border-green-400 transition-colors group"
@@ -548,7 +548,7 @@ export default function DashboardPage() {
                   Connect your calendar
                 </h3>
                 <p className="text-xs text-gray-400 mt-0.5">
-                  Link Google Calendar, Outlook, or Apple Calendar via Cal.com to unlock AI alignment insights
+                  Link your Google Calendar to unlock AI alignment insights
                 </p>
               </div>
               <svg className="w-5 h-5 text-gray-300 group-hover:text-gray-900 shrink-0 hidden sm:block" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">

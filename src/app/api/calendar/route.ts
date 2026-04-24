@@ -1,15 +1,15 @@
 import { NextResponse } from "next/server";
-import { getCalAccessToken, calApiFetch, isCalConnectedServer } from "@/lib/cal";
+import { getGCalAccessToken, gcalApiFetch, isGCalConnectedServer } from "@/lib/cal";
 
-// GET /api/calendar — fetch bookings and busy times
+// GET /api/calendar — fetch events from Google Calendar
 export async function GET() {
-  // First check if calendar is connected via Notion settings
-  const connected = await isCalConnectedServer();
+  // Check if calendar is connected via Notion settings
+  const connected = await isGCalConnectedServer();
   if (!connected) {
-    return NextResponse.json({ connected: false, bookings: [] });
+    return NextResponse.json({ connected: false, events: [] });
   }
 
-  const token = await getCalAccessToken();
+  const token = await getGCalAccessToken();
   if (!token) {
     return NextResponse.json(
       { error: "Calendar token expired. Please reconnect.", connected: false },
@@ -18,45 +18,53 @@ export async function GET() {
   }
 
   try {
-    // Fetch bookings from Cal.com
-    const bookingsData = await calApiFetch("/bookings", token);
-
-    // Fetch connected calendars
-    let calendars = null;
-    try {
-      calendars = await calApiFetch("/calendars", token);
-    } catch {
-      // Calendar list may not be available depending on scopes
-    }
-
-    // Fetch busy times for the current week
+    // Get events from the past 30 days and next 30 days
     const now = new Date();
-    const startOfWeek = new Date(now);
-    startOfWeek.setDate(now.getDate() - now.getDay());
-    startOfWeek.setHours(0, 0, 0, 0);
+    const past = new Date(now);
+    past.setDate(now.getDate() - 30);
+    const future = new Date(now);
+    future.setDate(now.getDate() + 30);
 
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 7);
+    const timeMin = encodeURIComponent(past.toISOString());
+    const timeMax = encodeURIComponent(future.toISOString());
 
-    let busyTimes = null;
-    try {
-      busyTimes = await calApiFetch(
-        `/calendars/busy-times?dateFrom=${startOfWeek.toISOString()}&dateTo=${endOfWeek.toISOString()}&timeZone=${encodeURIComponent("America/New_York")}`,
-        token
-      );
-    } catch {
-      // Busy times may not be available
-    }
+    const eventsData = await gcalApiFetch(
+      `/calendars/primary/events?timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime&maxResults=100`,
+      token
+    );
+
+    const events = (eventsData.items ?? []).map(
+      (event: {
+        id?: string;
+        summary?: string;
+        description?: string;
+        start?: { dateTime?: string; date?: string };
+        end?: { dateTime?: string; date?: string };
+        status?: string;
+        attendees?: Array<{ displayName?: string; email?: string }>;
+        location?: string;
+      }) => ({
+        id: event.id,
+        title: event.summary ?? "Untitled",
+        description: event.description ?? "",
+        start: event.start?.dateTime ?? event.start?.date ?? "",
+        end: event.end?.dateTime ?? event.end?.date ?? "",
+        status: event.status,
+        attendees: (event.attendees ?? []).map((a) => ({
+          name: a.displayName ?? "",
+          email: a.email ?? "",
+        })),
+        location: event.location ?? "",
+      })
+    );
 
     // Set the access token cookie for the rest of this session
     const response = NextResponse.json({
-      bookings: bookingsData.data ?? bookingsData.bookings ?? [],
-      calendars: calendars?.data ?? null,
-      busyTimes: busyTimes?.data ?? null,
+      events,
       connected: true,
     });
 
-    response.cookies.set("cal_access_token", token, {
+    response.cookies.set("gcal_access_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

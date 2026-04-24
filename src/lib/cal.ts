@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { Client } from "@notionhq/client";
 
 // ─── Notion Settings helpers ─────────────────────────────────────────
-// Cal.com tokens are stored in the user's own Notion Settings database
-// so everything stays private and decentralized.
+// Google Calendar tokens are stored in the user's own Notion Settings
+// database so everything stays private and decentralized.
 
 async function getSettingsDbId(): Promise<string | null> {
   const cookieStore = await cookies();
@@ -122,97 +122,89 @@ export async function deleteSetting(key: string): Promise<boolean> {
   }
 }
 
-// ─── Cal.com token management ────────────────────────────────────────
+// ─── Google Calendar token management ────────────────────────────────
 
-// Get a valid Cal.com access token, refreshing from Notion-stored refresh token if needed
-export async function getCalAccessToken(): Promise<string | null> {
-  // First check cookie for current session's access token
+// Get a valid Google Calendar access token, refreshing if needed
+export async function getGCalAccessToken(): Promise<string | null> {
+  // Check session cookie first
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get("cal_access_token")?.value;
+  const accessToken = cookieStore.get("gcal_access_token")?.value;
   if (accessToken) return accessToken;
 
-  // No session token — try to refresh using token stored in Notion
-  const refreshToken = await getSetting("cal_refresh_token");
+  // Try to refresh using token stored in Notion
+  const refreshToken = await getSetting("gcal_refresh_token");
   if (!refreshToken) return null;
 
   try {
-    const res = await fetch("https://api.cal.com/v2/oauth/refresh", {
+    const res = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token: refreshToken,
-        client_id: process.env.CAL_CLIENT_ID!,
-        client_secret: process.env.CAL_CLIENT_SECRET!,
+        client_id: process.env.GOOGLE_CLIENT_ID!,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET!,
       }),
     });
 
     if (!res.ok) {
-      console.error("Cal.com token refresh failed");
+      console.error("Google token refresh failed:", await res.text());
       return null;
     }
 
     const data = await res.json();
-    const newAccessToken = data.access_token ?? data.data?.access_token;
-    const newRefreshToken = data.refresh_token ?? data.data?.refresh_token;
-
-    // Update refresh token in Notion if it changed
-    if (newRefreshToken && newRefreshToken !== refreshToken) {
-      await setSetting("cal_refresh_token", newRefreshToken);
-    }
-
-    return newAccessToken ?? null;
+    return data.access_token ?? null;
   } catch {
     return null;
   }
 }
 
-// Save Cal.com tokens after OAuth callback
-export async function saveCalTokens(
-  accessToken: string,
+// Save Google Calendar tokens after OAuth callback
+export async function saveGCalTokens(
   refreshToken: string
 ): Promise<boolean> {
-  // Save refresh token to Notion (persists across sessions)
-  const saved = await setSetting("cal_refresh_token", refreshToken);
+  const saved = await setSetting("gcal_refresh_token", refreshToken);
   if (saved) {
-    await setSetting("cal_connected", "true");
+    await setSetting("gcal_connected", "true");
   }
   return saved;
 }
 
-// Remove Cal.com connection
-export async function removeCalConnection(): Promise<boolean> {
-  await deleteSetting("cal_refresh_token");
-  await deleteSetting("cal_connected");
+// Remove Google Calendar connection
+export async function removeGCalConnection(): Promise<boolean> {
+  await deleteSetting("gcal_refresh_token");
+  await deleteSetting("gcal_connected");
   return true;
 }
 
-// Check if Cal.com is connected (reads from Notion)
-export async function isCalConnectedServer(): Promise<boolean> {
-  const val = await getSetting("cal_connected");
+// Check if Google Calendar is connected (reads from Notion)
+export async function isGCalConnectedServer(): Promise<boolean> {
+  const val = await getSetting("gcal_connected");
   return val === "true";
 }
 
-// ─── Cal.com API helper ──────────────────────────────────────────────
+// ─── Google Calendar API helper ──────────────────────────────────────
 
-export async function calApiFetch(
+export async function gcalApiFetch(
   endpoint: string,
   token: string,
   options: RequestInit = {}
 ) {
-  const res = await fetch(`https://api.cal.com/v2${endpoint}`, {
-    ...options,
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-      "cal-api-version": "2024-08-13",
-      ...options.headers,
-    },
-  });
+  const res = await fetch(
+    `https://www.googleapis.com/calendar/v3${endpoint}`,
+    {
+      ...options,
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    }
+  );
 
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`Cal.com API error ${res.status}: ${text}`);
+    throw new Error(`Google Calendar API error ${res.status}: ${text}`);
   }
 
   return res.json();
