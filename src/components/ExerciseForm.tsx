@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { ExerciseConfig, ExerciseField } from "@/lib/exercises";
 
 interface ExerciseFormProps {
@@ -10,6 +10,112 @@ interface ExerciseFormProps {
 }
 
 type FormData = Record<string, string>;
+
+// ─── Voice Input Hook ────────────────────────────────────────────────
+
+function useVoiceInput(
+  currentValue: string,
+  onChange: (val: string) => void
+) {
+  const [isListening, setIsListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const [supported, setSupported] = useState(false);
+
+  useEffect(() => {
+    const SpeechRecognition =
+      typeof window !== "undefined"
+        ? window.SpeechRecognition || window.webkitSpeechRecognition
+        : null;
+    setSupported(!!SpeechRecognition);
+  }, []);
+
+  const toggle = useCallback(() => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    let finalTranscript = "";
+
+    recognition.onresult = (event: SpeechRecognitionEvent) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + " ";
+        } else {
+          interim = transcript;
+        }
+      }
+      // Append to existing value
+      const base = currentValue ? currentValue.trimEnd() + " " : "";
+      onChange((base + finalTranscript + interim).trimStart());
+    };
+
+    recognition.onerror = () => {
+      setIsListening(false);
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognitionRef.current = recognition;
+    recognition.start();
+    setIsListening(true);
+  }, [isListening, currentValue, onChange]);
+
+  return { isListening, toggle, supported };
+}
+
+// ─── Mic Button Component ────────────────────────────────────────────
+
+function MicButton({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) {
+  const { isListening, toggle, supported } = useVoiceInput(value, onChange);
+
+  if (!supported) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+        isListening
+          ? "bg-red-500 text-white animate-pulse"
+          : "bg-gray-100 text-gray-400 hover:bg-gray-200 hover:text-gray-600"
+      }`}
+      title={isListening ? "Stop recording" : "Speak to type"}
+    >
+      <svg
+        className="w-4 h-4"
+        fill="currentColor"
+        viewBox="0 0 24 24"
+      >
+        {isListening ? (
+          <rect x="6" y="6" width="12" height="12" rx="2" />
+        ) : (
+          <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+        )}
+      </svg>
+    </button>
+  );
+}
 
 // ─── Field renderers ─────────────────────────────────────────────────
 
@@ -25,9 +131,17 @@ function TextareaField({
   return (
     <div>
       {field.label && (
-        <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-          {field.label}
-        </label>
+        <div className="flex items-center justify-between mb-1.5">
+          <label className="text-sm font-semibold text-gray-700">
+            {field.label}
+          </label>
+          <MicButton value={value} onChange={onChange} />
+        </div>
+      )}
+      {!field.label && (
+        <div className="flex justify-end mb-1">
+          <MicButton value={value} onChange={onChange} />
+        </div>
       )}
       <textarea
         value={value}
@@ -56,13 +170,16 @@ function ShortTextField({
           {field.label}
         </label>
       )}
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={field.placeholder}
-        className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-300"
-      />
+      <div className="flex items-center gap-2">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder}
+          className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-300"
+        />
+        <MicButton value={value} onChange={onChange} />
+      </div>
     </div>
   );
 }
@@ -83,13 +200,16 @@ function SingleWordField({
           {field.label}
         </label>
       )}
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={field.placeholder}
-        className="w-full max-w-xs mx-auto px-4 py-4 text-3xl sm:text-4xl font-black text-center border-b-2 border-gray-300 focus:border-gray-900 focus:outline-none bg-transparent placeholder:text-gray-200 placeholder:font-normal placeholder:text-2xl"
-      />
+      <div className="flex items-center justify-center gap-3">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={field.placeholder}
+          className="w-full max-w-xs px-4 py-4 text-3xl sm:text-4xl font-black text-center border-b-2 border-gray-300 focus:border-gray-900 focus:outline-none bg-transparent placeholder:text-gray-200 placeholder:font-normal placeholder:text-2xl"
+        />
+        <MicButton value={value} onChange={onChange} />
+      </div>
       <p className="text-xs text-gray-400 mt-4">
         Write it big. Post it where you&apos;ll see it throughout the year.
       </p>
@@ -126,6 +246,7 @@ function NumberedItemField({
         placeholder={field.placeholder}
         className="flex-1 px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent placeholder:text-gray-300"
       />
+      <MicButton value={value} onChange={onChange} />
     </div>
   );
 }
@@ -142,9 +263,17 @@ function FillBlankField({
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5">
       {field.label && (
-        <h4 className="text-sm font-black uppercase tracking-wide text-gray-900 mb-3">
-          {field.label}
-        </h4>
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-sm font-black uppercase tracking-wide text-gray-900">
+            {field.label}
+          </h4>
+          <MicButton value={value} onChange={onChange} />
+        </div>
+      )}
+      {!field.label && (
+        <div className="flex justify-end mb-2">
+          <MicButton value={value} onChange={onChange} />
+        </div>
       )}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-1.5 sm:gap-2">
         {field.prefix && (
